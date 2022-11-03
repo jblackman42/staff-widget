@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <!-- STYLING STUFF HERE -->
+<link rel="stylesheet" href="https://www.pureheart.org/wp-content/uploads/2022/10/staffWidgetStyles.css">
+<style>
+    :root {
+        --btn-bg-color: #7f7f7e;
+        --image-background-color: #a4a4a8;
+        --btn-color: white;
+        --card-name-background: #7b2d26;
+        --user-card-width: 200px;
+        --user-columns: 5;
+        --user-gap: .5rem;
+    }
+</style>
+
+<!-- HTML STUFF HERE -->
+
+<div id="staff-widget"></div>
+
+<!-- JAVASCRIPT STUFF IS HERE -->
+
+<script>
+const filterValues = [
+    {
+        label: 'All Staff',
+        value: 0,
+        Group_IDs: [2443, 2464, 2387, 2388, 2389, 2390]
+    },
+    {
+        label: 'Lead Pastors',
+        value: 1,
+        Group_IDs: [2443, 2464, 2387]
+    },
+    {
+        label: 'Pastors',
+        value: 2,
+        Group_IDs: [2388]
+    },
+    {
+        label: 'Directors',
+        value: 3,
+        Group_IDs: [2389]
+    },
+    {
+        label: 'Support Staff',
+        value: 4,
+        Group_IDs: [2390]
+    }
+]
+</script>
+<script src="https://phc-widgets.s3.us-west-1.amazonaws.com/staffWidgetScript.js"></script>
+</body>
+</html>

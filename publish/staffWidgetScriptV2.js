@@ -1,11 +1,10 @@
 const staffWidget = document.querySelector('#staff-widget');
 
 const showStaffPopup = (group_id, id) => {
-    // const staffPopupContainer = document.querySelector('#staff-popup-container')
     const staffPopupContainer = document.createElement('div');
     staffPopupContainer.id = 'staff-popup-container';
 
-    // const staffPopup = document.querySelector('#staff-popup')
+    console.log('showing popup')
 
     const userGroup = allStaff.filter(group => group.Group_ID == group_id)[0]
     const user = userGroup ?  userGroup.Participants.filter(user => user.Contact_ID == id)[0] : null;
@@ -25,11 +24,17 @@ const showStaffPopup = (group_id, id) => {
             </div>
         </div>
     `
+    staffPopupContainer.style.display = 'grid';
+    staffPopupContainer.style.visibility = 'visible';
+    staffPopupContainer.style.zIndex = 999999;
     document.body.appendChild(staffPopupContainer)
 }
 const hideStaffPopup = () => {
-    const staffPopup = document.querySelector('#staff-popup-container')
-    document.body.removeChild(staffPopup)
+    const staffPopupContainer = document.querySelector('#staff-popup-container')
+    staffPopupContainer.style.display = 'none';
+    staffPopupContainer.style.visibility = 'hidden';
+    staffPopupContainer.style.zIndex = -1;
+    document.body.removeChild(staffPopupContainer)
 }
 
 document.onclick = function(e){
@@ -46,6 +51,14 @@ let allStaff, staff;
 const getStaff = async () => await fetch('https://phc.events/api/widgets/staff')
     .then(response => response.json())
     .then(data => data.staff)
+
+const emailStaff = async (Section_Id, Staff_Id) => {
+    const email = await fetch(`https://phc.events/api/widgets/staff-email?sectionId=${Section_Id}&staffId=${Staff_Id}`)
+        .then(response => response.json())
+        .then(data => data.Email)
+
+    window.open(`mailto:${email}`)
+}
 
 const createWidget = async () => {
     allStaff = await getStaff();
@@ -81,17 +94,17 @@ const createStaffGroupHTML = (id, title) => {
     `
 }
 
-const createStaffCard = (group_id, id, display_name, email, phone, title, imageUrl, Web_Page, Bio) => {
+const createStaffCard = (group_id, id, display_name, Section_Id, Staff_Id, title, imageUrl, Bio) => {
     const groupElem = document.querySelector(`#group-${group_id}`);
     groupElem.innerHTML += `
-<div class="staff-card" id="staff-${id}">
-    <img src="${imageUrl}" alt="staff headshot">
-    <div id="staff-info">
-        <p id="name">${display_name}</p>
-        <p id="title">${title}</p>
-        ${email ? `<a href="mailto:${email}" class="btn">Email ${display_name.split(' ')[0]}</a>` : ''}
-        ${Bio ? `<button id="info-link" onclick="showStaffPopup(${group_id}, ${id})">More Info</button>` : ''}
-        </div>
+        <div class="staff-card" id="staff-${id}">
+            <img src="${imageUrl}" alt="staff headshot">
+            <div id="staff-info">
+                <p id="name">${display_name}</p>
+                <p id="title">${title}</p>
+                <button class="btn" onclick="emailStaff(${Section_Id}, ${Staff_Id})">Email ${display_name.split(' ')[0]}</button>
+                ${Bio ? `<button id="info-link" onclick="showStaffPopup(${group_id}, ${id})">More Info</button>` : ''}
+            </div>
         </div>
         `
     // ${phone ? `<a href="tel:${phone}">${phone}</a>` : ''}
@@ -128,39 +141,11 @@ const showStaff = () => {
         });
 
         for (let j = 0; j < Participants.length; j ++) {
-            const {Contact_ID, Display_Name, Email, First_Name, Image_URL, Job_Title, Last_Name, Phone, Web_Page, Bio} = Participants[j];
-            if (!hiddenGroup && (!filterContactIDs.length || filterContactIDs.includes(Contact_ID))) createStaffCard(Group_ID, Contact_ID, Display_Name, Email, Phone, Job_Title, Image_URL, Web_Page, Bio)
+            const {Contact_ID, Display_Name, Email, First_Name, Image_URL, Job_Title, Last_Name, Phone, Web_Page, Bio, Section_Id, Staff_Id} = Participants[j];
+            if (!hiddenGroup && (!filterContactIDs.length || filterContactIDs.includes(Contact_ID))) createStaffCard(Group_ID, Contact_ID, Display_Name, Section_Id, Staff_Id, Job_Title, Image_URL, Bio)
         }
     }
 }
-
-const filterValues = [
-    {
-        label: 'All Staff',
-        value: 0,
-        Group_IDs: [2443, 2464, 2387, 2388, 2389, 2390]
-    },
-    {
-        label: 'Lead Pastors',
-        value: 1,
-        Group_IDs: [2443, 2464, 2387]
-    },
-    {
-        label: 'Pastors',
-        value: 2,
-        Group_IDs: [2388]
-    },
-    {
-        label: 'Directors',
-        value: 3,
-        Group_IDs: [2389]
-    },
-    {
-        label: 'Support Staff',
-        value: 4,
-        Group_IDs: [2390]
-    }
-]
 
 const updateFilters = async () => {
     const dropdownDOM = document.getElementById('staff-filter');
