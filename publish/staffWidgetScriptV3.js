@@ -94,10 +94,11 @@ const createStaffGroupHTML = (id, title) => {
     `
 }
 
+let staffCardCount = 0;
 const createStaffCard = (group_id, id, display_name, Section_Id, Staff_Id, title, imageUrl, Bio) => {
     const groupElem = document.querySelector(`#group-${group_id}`);
     groupElem.innerHTML += `
-        <div class="staff-card" id="staff-${id}">
+        <div class="staff-card" id="staff-${id}" style="animation-delay:${50 * staffCardCount}ms">
             <img src="${imageUrl}" alt="staff headshot">
             <div id="staff-info">
                 <p id="name">${display_name}</p>
@@ -108,6 +109,7 @@ const createStaffCard = (group_id, id, display_name, Section_Id, Staff_Id, title
         </div>
         `
     // ${phone ? `<a href="tel:${phone}">${phone}</a>` : ''}
+    staffCardCount += 1;
 }
 
 let filterContactIDs = [];
